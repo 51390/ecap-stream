@@ -28,28 +28,28 @@ typedef struct {
 
 
 class Service: public libecap::adapter::Service {
-	public:
+    public:
         Service();
-		// About
-		virtual std::string uri() const; // unique across all vendors
-		virtual std::string tag() const; // changes with version and config
-		virtual void describe(std::ostream &os) const; // free-format info
+        // About
+        virtual std::string uri() const; // unique across all vendors
+        virtual std::string tag() const; // changes with version and config
+        virtual void describe(std::ostream &os) const; // free-format info
 
-		// Configuration
-		virtual void configure(const libecap::Options &cfg);
-		virtual void reconfigure(const libecap::Options &cfg);
-		void setOne(const libecap::Name &name, const libecap::Area &valArea);
+        // Configuration
+        virtual void configure(const libecap::Options &cfg);
+        virtual void reconfigure(const libecap::Options &cfg);
+        void setOne(const libecap::Name &name, const libecap::Area &valArea);
 
-		// Lifecycle
-		virtual void start(); // expect makeXaction() calls
-		virtual void stop(); // no more makeXaction() calls until start()
-		virtual void retire(); // no more makeXaction() calls
+        // Lifecycle
+        virtual void start(); // expect makeXaction() calls
+        virtual void stop(); // no more makeXaction() calls until start()
+        virtual void retire(); // no more makeXaction() calls
 
-		// Scope (XXX: this may be changed to look at the whole header)
-		virtual bool wantsUrl(const char *url) const;
+        // Scope (XXX: this may be changed to look at the whole header)
+        virtual bool wantsUrl(const char *url) const;
 
-		// Work
-		virtual MadeXactionPointer makeXaction(libecap::host::Xaction *hostx);
+        // Work
+        virtual MadeXactionPointer makeXaction(libecap::host::Xaction *hostx);
 
         void (*init)();
         void (*transfer)(int, const void*, size_t, const char*);
@@ -64,12 +64,12 @@ class Service: public libecap::adapter::Service {
 
 
 class Cfgtor: public libecap::NamedValueVisitor {
-	public:
-		Cfgtor(Service &aSvc): svc(aSvc) {}
-		virtual void visit(const libecap::Name &name, const libecap::Area &value) {
-			svc.setOne(name, value);
-		}
-		Service &svc;
+    public:
+        Cfgtor(Service &aSvc): svc(aSvc) {}
+        virtual void visit(const libecap::Name &name, const libecap::Area &value) {
+            svc.setOne(name, value);
+        }
+        Service &svc;
 };
 
 class HeaderVisitor: public libecap::NamedValueVisitor {
@@ -87,53 +87,53 @@ class HeaderVisitor: public libecap::NamedValueVisitor {
 
 
 class Xaction: public libecap::adapter::Xaction {
-	public:
-		Xaction(libecap::shared_ptr<Service> s, libecap::host::Xaction *x);
-		virtual ~Xaction();
+    public:
+        Xaction(libecap::shared_ptr<Service> s, libecap::host::Xaction *x);
+        virtual ~Xaction();
 
-		// meta-information for the host transaction
-		virtual const libecap::Area option(const libecap::Name &name) const;
-		virtual void visitEachOption(libecap::NamedValueVisitor &visitor) const;
+        // meta-information for the host transaction
+        virtual const libecap::Area option(const libecap::Name &name) const;
+        virtual void visitEachOption(libecap::NamedValueVisitor &visitor) const;
 
-		// lifecycle
-		virtual void start();
-		virtual void stop();
+        // lifecycle
+        virtual void start();
+        virtual void stop();
 
-		// adapted body transmission control
-		virtual void abDiscard();
-		virtual void abMake();
-		virtual void abMakeMore();
-		virtual void abStopMaking();
+        // adapted body transmission control
+        virtual void abDiscard();
+        virtual void abMake();
+        virtual void abMakeMore();
+        virtual void abStopMaking();
 
-		// adapted body content extraction and consumption
-		virtual libecap::Area abContent(size_type offset, size_type size);
-		virtual void abContentShift(size_type size);
+        // adapted body content extraction and consumption
+        virtual libecap::Area abContent(size_type offset, size_type size);
+        virtual void abContentShift(size_type size);
 
-		// virgin body state notification
-		virtual void noteVbContentDone(bool atEnd);
-		virtual void noteVbContentAvailable();
+        // virgin body state notification
+        virtual void noteVbContentDone(bool atEnd);
+        virtual void noteVbContentAvailable();
 
-	protected:
-		void stopVb();
-		libecap::host::Xaction *lastHostCall();
+    protected:
+        void stopVb();
+        libecap::host::Xaction *lastHostCall();
 
-	private:
+    private:
         void _processBuffers();
         void _cleanup();
 
-		libecap::shared_ptr<const Service> service;
+        libecap::shared_ptr<const Service> service;
         libecap::shared_ptr<libecap::Message>  adapted;
-		libecap::host::Xaction *hostx;
+        libecap::host::Xaction *hostx;
                                 
         int id = 0;
         int contentLength = 0;
         char* requestUri = 0;
 
-		typedef enum { opUndecided, opOn, opComplete, opNever } OperationState;
+        typedef enum { opUndecided, opOn, opComplete, opNever } OperationState;
 };
 
 static const std::string CfgErrorPrefix =
-	"Modifying Adapter: configuration error: ";
+    "Modifying Adapter: configuration error: ";
 
 } // namespace Adapter
 
@@ -141,40 +141,40 @@ Adapter::Service::Service(): libecap::adapter::Service() {
 }
 
 std::string Adapter::Service::uri() const {
-	return "ecap://github.com/51390/ecap-stream";
+    return "ecap://github.com/51390/ecap-stream";
 }
 
 std::string Adapter::Service::tag() const {
-	return PACKAGE_VERSION;
+    return PACKAGE_VERSION;
 }
 
 void Adapter::Service::describe(std::ostream &os) const {
-	os << "A modifying adapter from " << PACKAGE_NAME << " v" << PACKAGE_VERSION;
+    os << "A modifying adapter from " << PACKAGE_NAME << " v" << PACKAGE_VERSION;
 }
 
 void Adapter::Service::configure(const libecap::Options &cfg) {
-	Cfgtor cfgtor(*this);
-	cfg.visitEachOption(cfgtor);
+    Cfgtor cfgtor(*this);
+    cfg.visitEachOption(cfgtor);
 }
 
 void Adapter::Service::reconfigure(const libecap::Options &cfg) {
-	configure(cfg);
+    configure(cfg);
 }
 
 void Adapter::Service::setOne(const libecap::Name &key, const libecap::Area &val) {
-	const std::string value = val.toString();
+    const std::string value = val.toString();
     const std::string name = key.image();
     if (key.assignedHostId()) {
-		// skip host-standard options we do not know or care about
+        // skip host-standard options we do not know or care about
     } else if(name == "analyzerPath") {
         analyzerPath = value;
     } else
-		throw libecap::TextException(CfgErrorPrefix +
-			"unsupported configuration parameter: " + name);
+        throw libecap::TextException(CfgErrorPrefix +
+            "unsupported configuration parameter: " + name);
 }
 
 void Adapter::Service::start() {
-	libecap::adapter::Service::start();
+    libecap::adapter::Service::start();
 
     std::clog << "Prism starting" << std::endl;
 
@@ -195,50 +195,50 @@ void Adapter::Service::start() {
 }
 
 void Adapter::Service::stop() {
-	// custom code would go here, but this service does not have one
-	libecap::adapter::Service::stop();
+    // custom code would go here, but this service does not have one
+    libecap::adapter::Service::stop();
 }
 
 void Adapter::Service::retire() {
-	// custom code would go here, but this service does not have one
-	libecap::adapter::Service::stop();
+    // custom code would go here, but this service does not have one
+    libecap::adapter::Service::stop();
 }
 
 bool Adapter::Service::wantsUrl(const char *url) const {
-	return true; // no-op is applied to all messages
+    return true; // no-op is applied to all messages
 }
 
 Adapter::Service::MadeXactionPointer
 Adapter::Service::makeXaction(libecap::host::Xaction *hostx) {
-	return Adapter::Service::MadeXactionPointer(
-		new Adapter::Xaction(std::tr1::static_pointer_cast<Service>(self), hostx));
+    return Adapter::Service::MadeXactionPointer(
+        new Adapter::Xaction(std::tr1::static_pointer_cast<Service>(self), hostx));
 }
 
 int counter = 0;
 
 Adapter::Xaction::Xaction(libecap::shared_ptr<Service> aService,
-	libecap::host::Xaction *x):
-	service(aService),
-	hostx(x) {
+    libecap::host::Xaction *x):
+    service(aService),
+    hostx(x) {
     id = counter++;
 }
 
 Adapter::Xaction::~Xaction() {
-	if (libecap::host::Xaction *x = hostx) {
-		hostx = 0;
-		x->adaptationAborted();
-	}
+    if (libecap::host::Xaction *x = hostx) {
+        hostx = 0;
+        x->adaptationAborted();
+    }
 
     service->commit(id, "N/A", requestUri);
     _cleanup();
 }
 
 const libecap::Area Adapter::Xaction::option(const libecap::Name &) const {
-	return libecap::Area(); // this transaction has no meta-information
+    return libecap::Area(); // this transaction has no meta-information
 }
 
 void Adapter::Xaction::visitEachOption(libecap::NamedValueVisitor &) const {
-	// this transaction has no meta-information to pass to the visitor
+    // this transaction has no meta-information to pass to the visitor
 }
 
 
@@ -246,11 +246,11 @@ void Adapter::Xaction::start() {
     if(!hostx) {
         return;
     }
-	if (hostx->virgin().body()) {
-		hostx->vbMake(); 
-	}
+    if (hostx->virgin().body()) {
+        hostx->vbMake();
+    }
 
-	adapted = hostx->virgin().clone();
+    adapted = hostx->virgin().clone();
 
     if(!adapted) {
         return;
@@ -260,17 +260,17 @@ void Adapter::Xaction::start() {
         adapted->header().removeAny(libecap::headerContentLength);
     }
 
-	if (!adapted->body()) {
-		lastHostCall()->useAdapted(adapted);
-	} else {
-		hostx->useAdapted(adapted);
-	}
+    if (!adapted->body()) {
+        lastHostCall()->useAdapted(adapted);
+    } else {
+        hostx->useAdapted(adapted);
+    }
 
 }
 
 void Adapter::Xaction::stop() {
-	hostx = 0;
-	// the caller will delete
+    hostx = 0;
+    // the caller will delete
     service->commit(id, "N/A", requestUri);
     _cleanup();
 }
@@ -284,7 +284,7 @@ void Adapter::Xaction::_cleanup() {
 
 void Adapter::Xaction::abDiscard()
 {
-	stopVb();
+    stopVb();
 }
 
 void Adapter::Xaction::abMake()
@@ -294,31 +294,12 @@ void Adapter::Xaction::abMake()
 
 void Adapter::Xaction::abMakeMore()
 {
-	hostx->vbMakeMore();
+    hostx->vbMakeMore();
 }
 
 void Adapter::Xaction::abStopMaking()
 {
-	stopVb();
-}
-
-void to_file(const char* fname, int id, const char* suffix, const void* content, size_t n, bool append) {
-    /*
-    FILE *f;
-    char* filename = (char*)malloc(1024);
-    snprintf(filename, 1024, "%s-%d%s", fname, id, suffix);
-
-    if(append) {
-        f = fopen(filename, "a+");
-    } else {
-        f = fopen(filename, "w+");
-    }
-
-    fwrite(content, sizeof(char), n, f);
-
-    free(filename);
-    fclose(f);
-    */
+    stopVb();
 }
 
 libecap::Area Adapter::Xaction::abContent(size_type offset, size_type size) {
@@ -327,11 +308,6 @@ libecap::Area Adapter::Xaction::abContent(size_type offset, size_type size) {
     if(c.size) {
         return libecap::Area::FromTempBuffer((const char*)c.bytes, c.size);;
     } else {
-        /*char z[4096];
-        memset(z, 0, sizeof(z));
-
-        libecap::Area a = libecap::Area::FromTempBuffer((const char*)z, 4096);
-        return a;*/
         return libecap::Area();
     }
 }
@@ -341,7 +317,7 @@ void Adapter::Xaction::abContentShift(size_type size) {
 
 void Adapter::Xaction::noteVbContentDone(bool atEnd)
 {
-	stopVb();
+    stopVb();
     service->content_done(id);
     hostx->noteAbContentDone(atEnd);
 }
@@ -363,9 +339,9 @@ void Adapter::Xaction::noteVbContentAvailable()
 
     }
 
-	const libecap::Area vb = hostx->vbContent(0, libecap::nsize); // get all vb
+    const libecap::Area vb = hostx->vbContent(0, libecap::nsize); // get all vb
     
-	hostx->vbContentShift(vb.size); // we have a copy; do not need vb any more
+    hostx->vbContentShift(vb.size); // we have a copy; do not need vb any more
 
     if (vb.size && vb.start) {
         service->transfer(id, vb.start, vb.size, requestUri);
@@ -383,11 +359,11 @@ void Adapter::Xaction::stopVb() {
 // last call may delete adapter transaction if the host no longer needs it
 // TODO: replace with hostx-independent "done" method
 libecap::host::Xaction *Adapter::Xaction::lastHostCall() {
-	libecap::host::Xaction *x = hostx;
-	hostx = 0;
-	return x;
+    libecap::host::Xaction *x = hostx;
+    hostx = 0;
+    return x;
 }
 
 // create the adapter and register with libecap to reach the host application
 static const bool Registered =
-	libecap::RegisterVersionedService(new Adapter::Service);
+    libecap::RegisterVersionedService(new Adapter::Service);
