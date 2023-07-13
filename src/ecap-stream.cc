@@ -141,7 +141,7 @@ Adapter::Service::Service(): libecap::adapter::Service() {
 }
 
 std::string Adapter::Service::uri() const {
-	return "ecap://e-cap.org/ecap/services/51390/prism";
+	return "ecap://github.com/51390/ecap-stream";
 }
 
 std::string Adapter::Service::tag() const {
