@@ -38,7 +38,7 @@ RUN ./configure ${ARCH_FLAGS} && make && make install
 RUN ldconfig
 
 # prism
-ARG PRISM_BUILD_PATH=/tmp/ecap-adapter
+ARG PRISM_BUILD_PATH=/tmp/build-ecap-stream
 ADD . $PRISM_BUILD_PATH
 WORKDIR $PRISM_BUILD_PATH
 RUN bash bootstrap.sh
