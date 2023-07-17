@@ -1,5 +1,8 @@
-TESTS = test_service_configure
-check_PROGRAMS = test_ecap_stream
-test_ecap_stream_SOURCES = test_service.cc test_xaction.cc
-test_ecap_stream_CFLAGS = @CHECK_CFLAGS@
-test_ecap_stream_LDADD = ecap-stream @CHECK_LIBS@
+TESTS = test_service test_xaction
+check_PROGRAMS = test_service test_xaction
+test_service_SOURCES = test_service.cc
+test_service_CFLAGS = @CHECK_CFLAGS@ -lecap-stream
+test_service_LDADD = @CHECK_LIBS@
+test_xaction_SOURCES = test_xaction.cc
+test_xaction_CFLAGS = @CHECK_CFLAGS@ -lecap-stream
+test_xaction_LDADD = @CHECK_LIBS@

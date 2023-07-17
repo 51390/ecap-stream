@@ -35,3 +35,4 @@ RUN ./configure
 RUN make
 RUN make install
 RUN ldconfig
+RUN make check

@@ -1,3 +1,3 @@
 
 lib_LTLIBRARIES=libecap-stream.la
-libecap_stream_la_SOURCES=src/service.cc src/xaction.cc
+libecap_stream_la_SOURCES=service.cc xaction.cc
