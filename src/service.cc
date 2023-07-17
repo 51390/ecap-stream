@@ -11,45 +11,45 @@
 #include "service.h"
 #include "xaction.h"
 
-namespace Adapter {
+namespace EcapStream {
     static const std::string CfgErrorPrefix =
-        "Modifying Adapter: configuration error: ";
+        "Modifying EcapStream: configuration error: ";
 }
 
 class Cfgtor: public libecap::NamedValueVisitor {
     public:
-        Cfgtor(Adapter::Service &aSvc): svc(aSvc) {}
+        Cfgtor(EcapStream::Service &aSvc): svc(aSvc) {}
         virtual void visit(const libecap::Name &name, const libecap::Area &value) {
             svc.setOne(name, value);
         }
-        Adapter::Service &svc;
+        EcapStream::Service &svc;
 };
 
-Adapter::Service::Service(): libecap::adapter::Service() {
+EcapStream::Service::Service(): libecap::adapter::Service() {
 }
 
-std::string Adapter::Service::uri() const {
+std::string EcapStream::Service::uri() const {
     return "ecap://github.com/51390/ecap-stream";
 }
 
-std::string Adapter::Service::tag() const {
+std::string EcapStream::Service::tag() const {
     return PACKAGE_VERSION;
 }
 
-void Adapter::Service::describe(std::ostream &os) const {
+void EcapStream::Service::describe(std::ostream &os) const {
     os << "A modifying adapter from " << PACKAGE_NAME << " v" << PACKAGE_VERSION;
 }
 
-void Adapter::Service::configure(const libecap::Options &cfg) {
+void EcapStream::Service::configure(const libecap::Options &cfg) {
     Cfgtor cfgtor(*this);
     cfg.visitEachOption(cfgtor);
 }
 
-void Adapter::Service::reconfigure(const libecap::Options &cfg) {
+void EcapStream::Service::reconfigure(const libecap::Options &cfg) {
     configure(cfg);
 }
 
-void Adapter::Service::setOne(const libecap::Name &key, const libecap::Area &val) {
+void EcapStream::Service::setOne(const libecap::Name &key, const libecap::Area &val) {
     const std::string value = val.toString();
     const std::string name = key.image();
     if (key.assignedHostId()) {
@@ -61,7 +61,7 @@ void Adapter::Service::setOne(const libecap::Name &key, const libecap::Area &val
             "unsupported configuration parameter: " + name);
 }
 
-void Adapter::Service::start() {
+void EcapStream::Service::start() {
     libecap::adapter::Service::start();
 
     std::clog << "Prism starting" << std::endl;
@@ -82,26 +82,24 @@ void Adapter::Service::start() {
     std::clog << "Prism init OK" << std::endl;
 }
 
-void Adapter::Service::stop() {
-    // custom code would go here, but this service does not have one
+void EcapStream::Service::stop() {
     libecap::adapter::Service::stop();
 }
 
-void Adapter::Service::retire() {
-    // custom code would go here, but this service does not have one
+void EcapStream::Service::retire() {
     libecap::adapter::Service::stop();
 }
 
-bool Adapter::Service::wantsUrl(const char *url) const {
+bool EcapStream::Service::wantsUrl(const char *url) const {
     return true; // no-op is applied to all messages
 }
 
-Adapter::Service::MadeXactionPointer
-Adapter::Service::makeXaction(libecap::host::Xaction *hostx) {
-    return Adapter::Service::MadeXactionPointer(
-        new Adapter::Xaction(std::tr1::static_pointer_cast<Service>(self), hostx));
+EcapStream::Service::MadeXactionPointer
+EcapStream::Service::makeXaction(libecap::host::Xaction *hostx) {
+    return EcapStream::Service::MadeXactionPointer(
+        new EcapStream::Xaction(std::tr1::static_pointer_cast<Service>(self), hostx));
 }
 
 // create the adapter and register with libecap to reach the host application
 static const bool Registered =
-    libecap::RegisterVersionedService(new Adapter::Service);
+    libecap::RegisterVersionedService(new EcapStream::Service);
