@@ -9,10 +9,8 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 # package dependencies
 RUN apt update -y --fix-missing; \
     apt install -y \
-    curl wget gcc g++ automake autoconf libtool openssl \
-    libssl-dev libcppunit-dev make pkg-config vim gdb zstd \
-    zlib1g-dev valgrind rsyslog build-essential \
-    google-perftools libgoogle-perftools-dev smem
+    wget gcc g++ automake autoconf libtool \
+    pkg-config make build-essential check
 
 # arch flags
 ARG ARCH_SCRIPT=/tmp/arch.sh
