@@ -1,15 +1,14 @@
-#ifndef _CHUNK_H
-#define _CHUNK_H
+#ifndef _ECAP_STREAM_CHUNK_H
+#define _ECAP_STREAM_CHUNK_H
 
 #include <cstdlib>
 
-namespace Adapter {
+namespace EcapStream {
 
     typedef struct {
         size_t size;
         const void* bytes;
     } Chunk;
-
 }
 
 #endif

@@ -6,7 +6,7 @@
 
 #include "chunk.h"
 
-namespace Adapter {
+namespace EcapStream {
 
     class Service: public libecap::adapter::Service {
         public:

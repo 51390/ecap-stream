@@ -1,10 +1,11 @@
-#ifndef _XACTION_H
-#define _XACTION_H
+#ifndef _ECAP_STREAM_XACTION_H
+#define _ECAP_STREAM_XACTION_H
 
+#include <libecap/common/names.h>
 #include <libecap/adapter/xaction.h>
 #include "service.h"
 
-namespace Adapter {
+namespace EcapStream {
     using libecap::size_type;
 
     class Xaction: public libecap::adapter::Xaction {
@@ -50,7 +51,9 @@ namespace Adapter {
             int contentLength = 0;
             char* requestUri = 0;
 
-            typedef enum { opUndecided, opOn, opComplete, opNever } OperationState;
+            static int counter;
+            static libecap::Name headerContentEncoding;
+
     };
 
 
