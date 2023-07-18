@@ -36,4 +36,4 @@ RUN make
 RUN make install
 RUN ldconfig
 
-ENTRYPOINT make test
+ENTRYPOINT cd $ECAP_STREAM_BUILD_PATH && make test
