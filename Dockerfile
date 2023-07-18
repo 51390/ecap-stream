@@ -13,11 +13,13 @@ RUN apt update -y --fix-missing; \
     pkg-config make build-essential check
 
 # arch flags
-ARG ARCH_SCRIPT=/tmp/arch.sh
+ARG BUILD_ROOT=/build
+ARG ARCH_SCRIPT=$BUILD_ROOT/arch.sh
+RUN mkdir $BUILD_ROOT
 RUN echo 'test $(uname -i) = "aarch64" && echo -n "--build=aarch64-unknown-linux-gnu"' > $ARCH_SCRIPT
 
 # libecap
-ARG ECAP_BUILD_PATH=/tmp/build-ecap
+ARG ECAP_BUILD_PATH=$BUILD_ROOT/ecap
 RUN mkdir $ECAP_BUILD_PATH
 WORKDIR $ECAP_BUILD_PATH
 RUN wget https://www.e-cap.org/archive/libecap-1.0.0.tar.gz
@@ -27,7 +29,7 @@ RUN ./configure `bash $ARCH_SCRIPT`  && make && make install
 RUN ldconfig
 
 # ecap-stream
-ARG ECAP_STREAM_BUILD_PATH=/tmp/build-ecap-stream
+ARG ECAP_STREAM_BUILD_PATH=$BUILD_ROOT/build-ecap-stream
 ADD . $ECAP_STREAM_BUILD_PATH
 WORKDIR $ECAP_STREAM_BUILD_PATH
 RUN bash bootstrap.sh
@@ -36,4 +38,4 @@ RUN make
 RUN make install
 RUN ldconfig
 
-ENTRYPOINT cd $ECAP_STREAM_BUILD_PATH && make test
+ENTRYPOINT cd $ECAP_STREAM_BUILD_PATH && pwd && ls && make test
