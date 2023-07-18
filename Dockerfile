@@ -31,9 +31,7 @@ ARG ECAP_STREAM_BUILD_PATH=/tmp/build-ecap-stream
 ADD . $ECAP_STREAM_BUILD_PATH
 WORKDIR $ECAP_STREAM_BUILD_PATH
 RUN bash bootstrap.sh
-RUN ./configure
-RUN make
-RUN make install
+RUN ./configure && make && make install
 RUN ldconfig
 
 ENTRYPOINT make test
