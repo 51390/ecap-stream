@@ -2,4 +2,4 @@ name: 'Test'
 description: 'Ecap-Stream tests'
 runs:
   using: 'docker'
-  image: 'Dockerfile'
+  image: '../../../Dockerfile'
