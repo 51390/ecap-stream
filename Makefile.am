@@ -1,2 +1,5 @@
-lib_LTLIBRARIES=libecap-stream.la
-libecap_stream_la_SOURCES=src/service.cc src/xaction.cc
+ACLOCAL_AMFLAGS = -I m4
+SUBDIRS = src tests
+
+test:
+	make check || { cat tests/test-suite.log && false; }
