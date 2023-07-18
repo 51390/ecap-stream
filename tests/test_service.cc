@@ -1,7 +1,5 @@
 #include <check.h>
 #include <string.h>
-#include <libecap/common/area.h>
-#include <libecap/common/name.h>
 #include "../src/service.h"
 
 START_TEST (test_service_uri) {
