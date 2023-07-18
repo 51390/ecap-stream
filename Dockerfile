@@ -35,4 +35,4 @@ RUN ./configure
 RUN make
 RUN make install
 RUN ldconfig
-RUN make check
+RUN make check || { cat tests/test-suite.log && false; }
