@@ -54,32 +54,42 @@ void EcapStream::Service::setOne(const libecap::Name &key, const libecap::Area &
     const std::string name = key.image();
     if (key.assignedHostId()) {
         // skip host-standard options we do not know or care about
-    } else if(name == "analyzerPath") {
-        analyzerPath = value;
-    } else
+    } else if(name == "modulePath") {
+        _modulePath = value;
+    } else {
         throw libecap::TextException(CfgErrorPrefix +
-            "unsupported configuration parameter: " + name);
+                "unsupported configuration parameter: " + name);
+    }
 }
 
 void EcapStream::Service::start() {
     libecap::adapter::Service::start();
 
-    std::clog << "Prism starting" << std::endl;
+    std::clog << "Ecap-Stream started." << std::endl;
 
-    module_ = dlopen(analyzerPath.c_str(), RTLD_NOW | RTLD_GLOBAL);
+    _module = dlopen(_modulePath.c_str(), RTLD_NOW | RTLD_GLOBAL);
 
-    if(module_) {
-        init = (void (*)())dlsym(module_, "init");
+    if(_module) {
+        void (*init)();
+        init = (void (*)())dlsym(_module, "init");
         init();
 
-        transfer = (void (*)(int, const void*, size_t, const char*))dlsym(module_, "transfer");
-        commit = (void (*)(int, const char*, const char*))dlsym(module_, "commit");
-        header = (void (*)(int, const char*, const char*, const char*))dlsym(module_, "header");
-        get_content = (Chunk (*)(int))dlsym(module_, "get_content");
-        content_done = (void (*)(int))dlsym(module_, "content_done");
+        send_uri = (void (*)(int, const char*))dlsym(_module, "uri");
+        header = (void (*)(int, const char*, const char*))dlsym(_module, "header");
+        // note on function and variable naming.
+        // send & receive are "mirrored" to keep a more ergonomic
+        // naming from the perspective of the calling / defining module:
+        // ecap-stream will send data by calling "send" but this call will then
+        // translate in the loaded module into a "receive" function, because,
+        // from its perspective, it is the one receiving data.
+        // And similarly or the receive/send exchange.
+        send = (void (*)(int, const void*, size_type))dlsym(_module, "receive");
+        receive = (Chunk (*)(int, size_type, size_type))dlsym(_module, "send");
+        done = (void (*)(int))dlsym(_module, "done");
+        std::clog << "Ecap-Stream started." << std::endl;
+    } else {
+        std::clog << "Ecap-Stream failed starting. Check the 'modulePath' configuration." << std::endl;
     }
-
-    std::clog << "Prism init OK" << std::endl;
 }
 
 void EcapStream::Service::stop() {
@@ -88,6 +98,14 @@ void EcapStream::Service::stop() {
 
 void EcapStream::Service::retire() {
     libecap::adapter::Service::stop();
+
+    if(_module) {
+        dlclose(_module);
+    }
+    header = 0;
+    send = 0;
+    receive = 0;
+    done = 0;
 }
 
 bool EcapStream::Service::wantsUrl(const char *url) const {

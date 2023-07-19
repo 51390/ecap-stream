@@ -14,15 +14,15 @@ int EcapStream::Xaction::counter = 0;
 
 class HeaderVisitor: public libecap::NamedValueVisitor {
     public:
-        HeaderVisitor(libecap::shared_ptr<const EcapStream::Service> aSvc, int anId, const char* anUri): svc(aSvc), id(anId), requestUri(anUri) {}
+        HeaderVisitor(libecap::shared_ptr<const EcapStream::Service> aSvc, int anId): svc(aSvc), id(anId) {}
         virtual void visit(const libecap::Name &name, const libecap::Area &value) {
-            svc->header(id, name.image().c_str(), value.start, requestUri);
+            svc->header(id, name.image().c_str(), value.start);
         }
 
     private:
         libecap::shared_ptr<const EcapStream::Service> svc;
         int id;
-        const char* requestUri;
+        const char* _uri;
 };
 
 
@@ -40,7 +40,6 @@ EcapStream::Xaction::~Xaction() {
         x->adaptationAborted();
     }
 
-    service->commit(id, "N/A", requestUri);
     _cleanup();
 }
 
@@ -82,14 +81,13 @@ void EcapStream::Xaction::start() {
 void EcapStream::Xaction::stop() {
     hostx = 0;
     // the caller will delete
-    service->commit(id, "N/A", requestUri);
     _cleanup();
 }
 
 void EcapStream::Xaction::_cleanup() {
-    if(requestUri) {
-        free(requestUri);
-        requestUri = 0;
+    if(_uri) {
+        free(_uri);
+        _uri = 0;
     }
 }
 
@@ -114,8 +112,7 @@ void EcapStream::Xaction::abStopMaking()
 }
 
 libecap::Area EcapStream::Xaction::abContent(size_type offset, size_type size) {
-    // FIXME: transfer only size bytes, and keep the rest in an intermediary buffer.
-    Chunk c = service->get_content(id);
+    Chunk c = service->receive(id, offset, size);
 
     if(c.size) {
         return libecap::Area::FromTempBuffer((const char*)c.bytes, c.size);
@@ -130,25 +127,24 @@ void EcapStream::Xaction::abContentShift(size_type size) {
 void EcapStream::Xaction::noteVbContentDone(bool atEnd)
 {
     stopVb();
-    service->content_done(id);
+    service->done(id);
     hostx->noteAbContentDone(atEnd);
 }
 
 void EcapStream::Xaction::noteVbContentAvailable()
 {
-
-    if(!requestUri) {
-        // grab the request uri
+    if(!_uri) {
+        // send uri and headers
+        HeaderVisitor hv(service, id);
         const libecap::Message& cause = hostx->cause();
         const libecap::RequestLine& rl = dynamic_cast<const libecap::RequestLine&>(cause.firstLine());
         const libecap::Area uri = rl.uri();
-        requestUri = (char*)malloc(uri.size + 1);
-        memset(requestUri, 0, uri.size + 1);
-        memcpy(requestUri, uri.start, uri.size);
+        _uri = (char*)malloc(uri.size + 1);
+        memset(_uri, 0, uri.size + 1);
+        memcpy(_uri, uri.start, uri.size);
+        service->send_uri(id, _uri);
 
-        HeaderVisitor hv(service, id, requestUri);
         adapted->header().visitEach(hv);
-
     }
 
     const libecap::Area vb = hostx->vbContent(0, libecap::nsize); // get all vb
@@ -156,7 +152,7 @@ void EcapStream::Xaction::noteVbContentAvailable()
     hostx->vbContentShift(vb.size); // we have a copy; do not need vb any more
 
     if (vb.size && vb.start) {
-        service->transfer(id, vb.start, vb.size, requestUri);
+        service->send(id, vb.start, vb.size);
         hostx->noteAbContentAvailable();
     }
 }

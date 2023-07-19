@@ -49,7 +49,7 @@ namespace EcapStream {
 
             int id = 0;
             int contentLength = 0;
-            char* requestUri = 0;
+            char* _uri = 0;
 
             static int counter;
             static libecap::Name headerContentEncoding;
