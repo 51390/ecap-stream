@@ -47,13 +47,10 @@ namespace EcapStream {
             libecap::shared_ptr<libecap::Message>  adapted;
             libecap::host::Xaction *hostx;
 
-            int id = 0;
-            int contentLength = 0;
+            int _id = 0;
             char* _uri = 0;
 
-            static int counter;
-            static libecap::Name headerContentEncoding;
-
+            static int _counter;
     };
 
 

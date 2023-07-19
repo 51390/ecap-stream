@@ -40,6 +40,7 @@ namespace EcapStream {
             void (*send)(int, const void*, size_type);
             Chunk (*receive)(int, size_type, size_type);
             void (*done)(int);
+            void (*cleanup)(int);
         private:
             void* _module;
             std::string _modulePath;
