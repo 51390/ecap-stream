@@ -65,7 +65,7 @@ void EcapStream::Service::setOne(const libecap::Name &key, const libecap::Area &
 void EcapStream::Service::start() {
     libecap::adapter::Service::start();
 
-    std::clog << "Ecap-Stream started." << std::endl;
+    std::clog << "Ecap-Stream starting." << std::endl;
 
     _module = dlopen(_modulePath.c_str(), RTLD_NOW | RTLD_GLOBAL);
 
