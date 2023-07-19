@@ -2,11 +2,13 @@
 #define _ECAP_STREAM_SERVICE_H
 
 #include <cstring>
+#include <libecap/common/area.h>
 #include <libecap/adapter/service.h>
 
 #include "chunk.h"
 
 namespace EcapStream {
+    using libecap::size_type;
 
     class Service: public libecap::adapter::Service {
         public:
@@ -33,18 +35,15 @@ namespace EcapStream {
             // Work
             virtual MadeXactionPointer makeXaction(libecap::host::Xaction *hostx);
 
-            void (*init)();
-            void (*transfer)(int, const void*, size_t, const char*);
-            void (*commit)(int, const char*, const char*);
-            void (*header)(int, const char*, const char*, const char*);
-            void (*content_done)(int);
-            Chunk (*get_content)(int);
+            void (*send_uri)(int, const char*);
+            void (*header)(int, const char*, const char*);
+            void (*send)(int, const void*, size_type);
+            Chunk (*receive)(int, size_type, size_type);
+            void (*done)(int);
         private:
-            void * module_;
-            std::string analyzerPath;
+            void* _module;
+            std::string _modulePath;
     };
-
-
 }
 
 #endif
