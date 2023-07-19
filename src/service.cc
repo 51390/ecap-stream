@@ -86,6 +86,7 @@ void EcapStream::Service::start() {
         send = (void (*)(int, const void*, size_type))dlsym(_module, "receive");
         receive = (Chunk (*)(int, size_type, size_type))dlsym(_module, "send");
         done = (void (*)(int))dlsym(_module, "done");
+        cleanup = (void (*)(int))dlsym(_module, "cleanup");
         std::clog << "Ecap-Stream started." << std::endl;
     } else {
         std::clog << "Ecap-Stream failed starting. Check the 'modulePath' configuration." << std::endl;
@@ -106,6 +107,7 @@ void EcapStream::Service::retire() {
     send = 0;
     receive = 0;
     done = 0;
+    cleanup = 0;
 }
 
 bool EcapStream::Service::wantsUrl(const char *url) const {
