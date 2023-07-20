@@ -68,13 +68,13 @@ the final one will provide an example configuration for loading ecap-stream in t
 The following functions need to be implemented in the client module that will be loaded by
 libecap-stream, to complete an end-to-end implementation of the client module.
 
-### _void_ init_()_
+### _void_ init()
 
 This function should perform any module wide initialization required, such as specific logging
 or runtime setups that may be needed. It is called once per eCap-service initialization, which
 usually translates into a single call per host lifecycle.
 
-### _void_ uri_(int id, const char* uri)_
+### _void_ uri(_int_ id, _const char*_ uri)
 
 This function is the first called for each transaction. In the context of web requests or responses,
 note that each flow of information is separately handled by different transactions. So, there could be
@@ -87,7 +87,7 @@ _Parameters_:
  - **uri** _(const char*)_: a C null-terminated string, containing the full uri of the request (inluding
  query string parameters).
 
-### _void_ header_(int id, const char* name, const char* value)_
+### _void_ header(_int_ id, _const char*_ name, _const char*_ value)
 
 This function will notify about every request or response header that is seen in the transaction.
 There will be one call per header.
@@ -97,7 +97,7 @@ _Parameters_:
   - **name** _(const char*)_: a null-terminated string representing the header name.
   - **value** _(const char*)_: a null-terminated string representing the header value.
 
-### _void_ receive_(int id, const void* data, libecap::size_type size)_
+### _void_ receive_(_int_ id, _const void*_ data, _libecap::size_type_ size)
 
 This function notifies the client module of raw data available from the host, which usually is a part
 of a request or response body. None, a single, or multiple chunks may be sent, and the only guarantees made
@@ -109,7 +109,7 @@ _Parameters_:
   - **data** _(const void*)_: a pointer to an array of bytes that contains the available data from the host.
   - **size** _(libecap::size_type)_: the length of data available.
 
-### _[Chunk](https://github.com/51390/ecap-stream/blob/main/src/chunk.h)_ send_(int id, libecap::size_type offset, libecap::size_type size)_
+### _[Chunk](https://github.com/51390/ecap-stream/blob/main/src/chunk.h)_ send(_int_ id, _libecap::size_type_ offset, _libecap::size_type_ size)
 
 This function is called when the host expects to receive data. The auxiliar parameters
 `offset` and `size` can be used to determine where the data transmission should start or
@@ -127,7 +127,7 @@ _Return value:_
   It should usually be acceptable to return a `null` `bytes` value along with a `0` size -- but this ultimately
   depends on what the host expects, which falls outside the scope of eCap Stream.
 
-### _void_ done_(int id)_
+### _void_ done(_int_ id)
 
 This function signifies that the host has no additional raw data to be sent to the client module.
 There will be usually one last call to `send` so that any trailing data (such as stream terminators) can
@@ -136,7 +136,7 @@ be properly sent back to the host.
 _Parameters_:
   - **id** _(int)_: the transaction id for which data has been fully transmitted.
 
-### _void_ cleanup_(int id)_
+### _void_ cleanup(_int_ id)
 
 This function signifies transaction termination, and serves to cleanup any transaction
 related resources in the client module. No other calls are to be expected after this,
