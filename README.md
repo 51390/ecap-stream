@@ -3,8 +3,8 @@
 ![Tests](https://github.com/51390/ecap-stream/actions/workflows/test.yml/badge.svg)
 
 This is an [eCap adapter](https://www.e-cap.org/) that receives body data from the
-host and forwards it to an external library, to be recorded, adapted, aborted or
-ignored at will. The processed -- or unprocessed -- data is then sent back to the host.
+host and forwards it to an external library, to be then recorded, adapted or
+filtered at will. The processed -- or unprocessed -- data is then sent back to the host.
 
 The intent of _eCap Stream_ is to provide a simpler interface than fully implementing
 the eCap protocol.
@@ -49,14 +49,14 @@ FROM ecap-stream
 ...
 ```
 
-This will make both the libecap and libecap-stream dynamic so's available for linking.
+This will make both the libecap and libecap-stream dynamic shard objects available for linking.
 
 The next steps are:
   1. implement the external client module that will be loaded and receive the API calls
 with the host data to be then analyzed, adapted, or filtered, depending on the module's 
 implementation requirements. 
   2. this module must be packaged in another shared object and also made available for linking.
-  3. configure the host to load both the ecap-stream so, and pass along this configuration the
+  3. configure the host to load both the ecap-stream shared object, and pass along this configuration the
   required path for the module that will in turn be loaded by eCap stream to fully implement your
   adapter/filter.
 
