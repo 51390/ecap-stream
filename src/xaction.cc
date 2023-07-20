@@ -59,6 +59,16 @@ void EcapStream::Xaction::start() {
         hostx->vbMake();
     }
 
+    if(!_uri) {
+        const libecap::Message& cause = hostx->cause();
+        const libecap::RequestLine& rl = dynamic_cast<const libecap::RequestLine&>(cause.firstLine());
+        const libecap::Area uri = rl.uri();
+        _uri = (char*)malloc(uri.size + 1);
+        memset(_uri, 0, uri.size + 1);
+        memcpy(_uri, uri.start, uri.size);
+        service->send_uri(_id, _uri);
+    }
+
     adapted = hostx->virgin().clone();
 
     if(!adapted) {
@@ -68,6 +78,9 @@ void EcapStream::Xaction::start() {
     if(adapted->header().hasAny(libecap::headerContentLength)) {
         adapted->header().removeAny(libecap::headerContentLength);
     }
+
+    HeaderVisitor hv(service, _id);
+    adapted->header().visitEach(hv);
 
     if (!adapted->body()) {
         lastHostCall()->useAdapted(adapted);
