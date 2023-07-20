@@ -150,7 +150,7 @@ _Parameters_:
 The `modulePath` configuration parameter must be passed to eCap-stream, so it can
 find the client module implementation. This varies depending on the eCap host eCap-stream
 is to run on, so we will provide an example for configuring the [Squid](http://www.squid-cache.org/)
-proxy server. Always refer to the host documentation you want to use eCap-stream with.
+proxy server. Always refer to the documentation for the host you want to use eCap-stream with.
 
 Example Squid configuration (squid.conf):
 
