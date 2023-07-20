@@ -161,16 +161,17 @@ loadable_modules /usr/local/lib/libecap-stream.so
 ecap_enable on
 ecap_service lens_respmod respmod_precache \
                  uri=ecap://github.com/51390/ecap-stream \
-                 modulePath=/usr/local/lib/lib-client-module.so
+                 modulePath=/usr/local/lib/libclient-module.so
 
 adaptation_access lens_respmod allow all
 
 ...
 ```
 
-This example would load a client module in the path `/usr/local/lib/lib-client-module.so`,
-and then perform the calls as detailed per the [API](#API) section above, for every response
-transaction that passes through the Squid proxy.
+This example would load a client module in the path `/usr/local/lib/libclient-module.so`,
+that should implement the [API](#API) described above. After the host initializes the eCap
+interface and service, transactions should induce the data exchange between host, eCap-streamn
+and finally, the client module.
 
 For additional details about eCap, and Squid's implementation, refer to the [References](#References) below.
 
