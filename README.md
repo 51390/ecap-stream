@@ -74,7 +74,7 @@ This function should perform any module wide initialization required, such as sp
 or runtime setups that may be needed. It is called once per eCap-service initialization, which
 usually translates into a single call per host lifecycle.
 
-### _void uri(int id, const char* uri)_
+### _void_ **uri**_(int id, const char* uri)_
 
 This function is the first called for each transaction. In the context of web requests or responses,
 note that each flow of information is separately handled by different transactions. So, there could be
@@ -82,9 +82,9 @@ an initial transaction for handling the request and a matching subsequent transa
 respective response.
 
 Parameters:
- - ** id (int) **: this is an integer that represents the transaction identifier. It will be passed down
+ - **id** _(int)_: this is an integer that represents the transaction identifier. It will be passed down
  throughout all other interactions between eCap stream and the client module.
- - ** uri (const char*) **: a C null-terminated string, containing the full uri of the request (inluding
+ - **uri** _(const char*)_: a C null-terminated string, containing the full uri of the request (inluding
  query string parameters).
 
 ### _void header(int id, const char* name, const char* value)_
