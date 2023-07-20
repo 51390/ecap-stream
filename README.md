@@ -82,9 +82,9 @@ an initial transaction for handling the request and a matching subsequent transa
 respective response.
 
 Parameters:
- - **id (int)**: this is an integer that represents the transaction identifier. It will be passed down
+ - ** id (int) **: this is an integer that represents the transaction identifier. It will be passed down
  throughout all other interactions between eCap stream and the client module.
- - **uri (const char*)**: a C null-terminated string, containing the full uri of the request (inluding
+ - ** uri (const char*) **: a C null-terminated string, containing the full uri of the request (inluding
  query string parameters).
 
 ### _void header(int id, const char* name, const char* value)_
@@ -93,9 +93,9 @@ This function will notify about every request or response header that is seen in
 There will be one call per header.
 
 Parameters:
-  - **id (int)**: the transaction id to which the header belongs to.
-  - **name (const char*)**: a null-terminated string representing the header name.
-  - **value (const char*)**: a null-terminated string representing the header value.
+  - ** id (int) **: the transaction id to which the header belongs to.
+  - ** name (const char*) **: a null-terminated string representing the header name.
+  - ** value (const char*) **: a null-terminated string representing the header value.
 
 ### _void receive(int id, const void* data, libecap::size_type size)_
 
