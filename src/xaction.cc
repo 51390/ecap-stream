@@ -29,7 +29,8 @@ class HeaderVisitor: public libecap::NamedValueVisitor {
 EcapStream::Xaction::Xaction(libecap::shared_ptr<Service> aService,
     libecap::host::Xaction *x):
     service(aService),
-    hostx(x) {
+    hostx(x),
+    _uri(0) {
     _id = _counter++;
 }
 
