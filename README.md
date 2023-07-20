@@ -68,48 +68,48 @@ the final one will provide an example configuration for loading ecap-stream in t
 The following functions need to be implemented in the client module that will be loaded by
 libecap-stream, to complete an end-to-end implementation of the client module.
 
-### _void init()_
+### _void_ init_()_
 
 This function should perform any module wide initialization required, such as specific logging
 or runtime setups that may be needed. It is called once per eCap-service initialization, which
 usually translates into a single call per host lifecycle.
 
-### _void_ **uri**_(int id, const char* uri)_
+### _void_ uri_(int id, const char* uri)_
 
 This function is the first called for each transaction. In the context of web requests or responses,
 note that each flow of information is separately handled by different transactions. So, there could be
 an initial transaction for handling the request and a matching subsequent transaction for handling the
 respective response.
 
-Parameters:
+_Parameters_:
  - **id** _(int)_: this is an integer that represents the transaction identifier. It will be passed down
  throughout all other interactions between eCap stream and the client module.
  - **uri** _(const char*)_: a C null-terminated string, containing the full uri of the request (inluding
  query string parameters).
 
-### _void header(int id, const char* name, const char* value)_
+### _void_ header_(int id, const char* name, const char* value)_
 
 This function will notify about every request or response header that is seen in the transaction.
 There will be one call per header.
 
-Parameters:
-  - ** id (int) **: the transaction id to which the header belongs to.
-  - ** name (const char*) **: a null-terminated string representing the header name.
-  - ** value (const char*) **: a null-terminated string representing the header value.
+_Parameters_:
+  - **id** _(int)_: the transaction id to which the header belongs to.
+  - **name** _(const char*)_: a null-terminated string representing the header name.
+  - **value** _(const char*)_: a null-terminated string representing the header value.
 
-### _void receive(int id, const void* data, libecap::size_type size)_
+### _void_ receive_(int id, const void* data, libecap::size_type size)_
 
 This function notifies the client module of raw data available from the host, which usually is a part
 of a request or response body. None, a single, or multiple chunks may be sent, and the only guarantees made
 are on the order and completeness, meaning that chunks are sent ordered and all data in the body will
 be eventually sent down as chunks, if any data exists -- empty bodies may result in no calls being made.
 
-Parameters:
-  - **id (int)**: the transaction id to which the chunk of data belongs to.
-  - **data (const void*)**: a pointer to an array of bytes that contains the available data from the host.
-  - **size (libecap::size_type)**: the length of data available.
+_Parameters_:
+  - **id** _(int)_: the transaction id to which the chunk of data belongs to.
+  - **data** _(const void*)_: a pointer to an array of bytes that contains the available data from the host.
+  - **size** _(libecap::size_type)_: the length of data available.
 
-### _[Chunk](https://github.com/51390/ecap-stream/blob/main/src/chunk.h) send(int id, libecap::size_type offset, libecap::size_type size)_
+### _[Chunk](https://github.com/51390/ecap-stream/blob/main/src/chunk.h)_ send_(int id, libecap::size_type offset, libecap::size_type size)_
 
 This function is called when the host expects to receive data. The auxiliar parameters
 `offset` and `size` can be used to determine where the data transmission should start or
@@ -127,7 +127,7 @@ _Return value:_
   It should usually be acceptable to return a `null` `bytes` value along with a `0` size -- but this ultimately
   depends on what the host expects, which falls outside the scope of eCap Stream.
 
-### _void done(int id)_
+### _void_ done_(int id)_
 
 This function signifies that the host has no additional raw data to be sent to the client module.
 There will be usually one last call to `send` so that any trailing data (such as stream terminators) can
@@ -136,7 +136,7 @@ be properly sent back to the host.
 _Parameters_:
   - **id** _(int)_: the transaction id for which data has been fully transmitted.
 
-### _void cleanup(int id)_
+### _void_ cleanup_(int id)_
 
 This function signifies transaction termination, and serves to cleanup any transaction
 related resources in the client module. No other calls are to be expected after this,
