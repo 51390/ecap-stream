@@ -97,7 +97,7 @@ _Parameters_:
   - **name** _(const char*)_: a null-terminated string representing the header name.
   - **value** _(const char*)_: a null-terminated string representing the header value.
 
-### _void_ receive_(_int_ id, _const void*_ data, _libecap::size_type_ size)
+### _void_ receive(_int_ id, _const void*_ data, _libecap::size_type_ size)
 
 This function notifies the client module of raw data available from the host, which usually is a part
 of a request or response body. None, a single, or multiple chunks may be sent, and the only guarantees made
