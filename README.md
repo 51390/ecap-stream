@@ -1,6 +1,4 @@
-# eCap Stream
-
-![Tests](https://github.com/51390/ecap-stream/actions/workflows/test.yml/badge.svg)
+# eCap Stream ![Tests](https://github.com/51390/ecap-stream/actions/workflows/test.yml/badge.svg)
 
 This is an [eCap adapter](https://www.e-cap.org/) that receives body data from the
 host and forwards it to an external library, to be then recorded, adapted or
