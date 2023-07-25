@@ -3,9 +3,10 @@
 #include "../src/service.h"
 
 START_TEST (test_service_uri) {
-    EcapStream::Service service;
+    const std::string test_uri = "ecap://github.com/51390/ecap-stream/reqmod";
+    EcapStream::Service service(test_uri, EcapStream::Service::REQMOD);
     std::string uri = service.uri();
-    ck_assert_str_eq(uri.c_str(), "ecap://github.com/51390/ecap-stream");
+    ck_assert_str_eq(uri.c_str(), test_uri.c_str());
 }
 END_TEST
 
