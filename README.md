@@ -173,8 +173,6 @@ that should implement the [API](#API) described above. After the host initialize
 interface and service, transactions should induce the data exchange between host, eCap-streamn
 and finally, the client module.
 
-For additional details about eCap, and Squid's implementation, refer to the [References](#References) below.
-
 ## References
 
  - [eCap documentation](https://www.e-cap.org/docs/)
