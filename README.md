@@ -7,7 +7,7 @@ host and forwards it to an external library, to be then recorded, adapted or
 filtered at will. The processed -- or unprocessed -- data is then sent back to the host.
 
 The intent of this library is to provide a simpler interface than fully implementing
-the eCap protocol, and by that also supporting FFI implementations.
+the eCap protocol, and thus also support FFI implementations.
 
 ## Building
 
@@ -27,7 +27,7 @@ $ docker run -it ecap-stream
 ## Using
 
 Ecap-stream works by loading a configurable shared object library
-that conforms to its api, and delegates calls to it as some particular
+that implements the api described below, and delegating calls to it as some particular
 events take place in the host and are sent down to ecap-stream via the
 ecap interface.
 
@@ -36,7 +36,8 @@ These events are:
  these could be requests and responses.
  - _new data is available_: again in the web/proxy context, these will translate
  into request or response body data.
- - _host requests data_: the host is requesting a block of data.
+ - _host requests data_: the host is requesting a block of data. This can be the
+ data as just sent by the host, or an adapted version of it. 
  - _no more data is available from the host_: this would mean that all of the
  request/response data has been transferred in a web/proxy context.
  - _transaction is finished_.
