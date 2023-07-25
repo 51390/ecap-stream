@@ -12,12 +12,18 @@ namespace EcapStream {
 
     class Service: public libecap::adapter::Service {
         public:
-            Service();
+            typedef enum {
+                REQMOD,
+                RESPMOD
+            } Mode;
+
+            Service(const std::string& uri, Mode mode);
 
             // About
             virtual std::string uri() const; // unique across all vendors
             virtual std::string tag() const; // changes with version and config
             virtual void describe(std::ostream &os) const; // free-format info
+            Mode mode() const;
 
             // Configuration
             virtual void configure(const libecap::Options &cfg);
@@ -44,6 +50,8 @@ namespace EcapStream {
         private:
             void* _module;
             std::string _modulePath;
+            std::string _uri;
+            Mode _mode;
     };
 }
 

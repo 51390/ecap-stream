@@ -25,11 +25,16 @@ class Cfgtor: public libecap::NamedValueVisitor {
         EcapStream::Service &svc;
 };
 
-EcapStream::Service::Service(): libecap::adapter::Service() {
+EcapStream::Service::Service(const std::string& uri, Mode mode):
+    libecap::adapter::Service(), _uri(uri), _mode(mode) {
 }
 
 std::string EcapStream::Service::uri() const {
-    return "ecap://github.com/51390/ecap-stream";
+    return _uri;
+}
+
+EcapStream::Service::Mode EcapStream::Service::mode() const {
+    return _mode;
 }
 
 std::string EcapStream::Service::tag() const {
@@ -100,14 +105,14 @@ void EcapStream::Service::stop() {
 void EcapStream::Service::retire() {
     libecap::adapter::Service::stop();
 
-    if(_module) {
-        dlclose(_module);
-    }
     header = 0;
     send = 0;
     receive = 0;
     done = 0;
     cleanup = 0;
+    if(_module) {
+        dlclose(_module);
+    }
 }
 
 bool EcapStream::Service::wantsUrl(const char *url) const {
@@ -121,5 +126,8 @@ EcapStream::Service::makeXaction(libecap::host::Xaction *hostx) {
 }
 
 // create the adapter and register with libecap to reach the host application
-static const bool Registered =
-    libecap::RegisterVersionedService(new EcapStream::Service);
+static const bool RegisteredRespmod =
+    libecap::RegisterVersionedService(new EcapStream::Service("ecap://github.com/51390/ecap-stream/respmod", EcapStream::Service::RESPMOD));
+
+static const bool RegisteredReqmod =
+    libecap::RegisterVersionedService(new EcapStream::Service("ecap://github.com/51390/ecap-stream/reqmod", EcapStream::Service::REQMOD));

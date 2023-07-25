@@ -1,4 +1,4 @@
-
+#include <iostream>
 #include <libecap/common/message.h>
 #include <libecap/common/header.h>
 #include <libecap/common/names.h>
@@ -29,7 +29,8 @@ class HeaderVisitor: public libecap::NamedValueVisitor {
 EcapStream::Xaction::Xaction(libecap::shared_ptr<Service> aService,
     libecap::host::Xaction *x):
     service(aService),
-    hostx(x) {
+    hostx(x),
+    _uri(0) {
     _id = _counter++;
 }
 
@@ -53,10 +54,29 @@ void EcapStream::Xaction::visitEachOption(libecap::NamedValueVisitor &) const {
 
 void EcapStream::Xaction::start() {
     if(!hostx) {
+        std::clog << "No hostx, aborting transaction no. " << _id << std::endl;
         return;
     }
+
     if (hostx->virgin().body()) {
         hostx->vbMake();
+    }
+
+    if(!_uri) {
+        try {
+            const libecap::Message& cause = \
+                service->mode() == EcapStream::Service::RESPMOD ? \
+                hostx->cause() : \
+                hostx->virgin();
+            const libecap::RequestLine& rl = dynamic_cast<const libecap::RequestLine&>(cause.firstLine());
+            const libecap::Area uri = rl.uri();
+            _uri = (char*)malloc(uri.size + 1);
+            memset(_uri, 0, uri.size + 1);
+            memcpy(_uri, uri.start, uri.size);
+            service->send_uri(_id, _uri);
+        } catch(const std::exception& e) {
+            std::clog << "Transaction failed to start while initializing: " << e.what() << std::endl;
+        }
     }
 
     adapted = hostx->virgin().clone();
@@ -69,12 +89,14 @@ void EcapStream::Xaction::start() {
         adapted->header().removeAny(libecap::headerContentLength);
     }
 
+    HeaderVisitor hv(service, _id);
+    adapted->header().visitEach(hv);
+
     if (!adapted->body()) {
         lastHostCall()->useAdapted(adapted);
     } else {
         hostx->useAdapted(adapted);
     }
-
 }
 
 void EcapStream::Xaction::stop() {
