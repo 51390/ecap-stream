@@ -6,8 +6,8 @@ This is an [eCap adapter](https://www.e-cap.org/) that receives body data from t
 host and forwards it to an external library, to be then recorded, adapted or
 filtered at will. The processed -- or unprocessed -- data is then sent back to the host.
 
-The intent of _eCap Stream_ is to provide a simpler interface than fully implementing
-the eCap protocol.
+The intent of this library is to provide a simpler interface than fully implementing
+the eCap protocol, and by that also supporting FFI implementations.
 
 ## Building
 
