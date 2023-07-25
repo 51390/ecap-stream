@@ -160,18 +160,27 @@ loadable_modules /usr/local/lib/libecap-stream.so
 
 ecap_enable on
 ecap_service lens_respmod respmod_precache \
-                 uri=ecap://github.com/51390/ecap-stream \
+                 uri=ecap://github.com/51390/ecap-stream/respmod \
+                 modulePath=/usr/local/lib/libclient-module.so
+ecap_service lens_reqmod reqmod_precache \
+                 uri=ecap://github.com/51390/ecap-stream/reqmod \
                  modulePath=/usr/local/lib/libclient-module.so
 
 adaptation_access lens_respmod allow all
+adaptation_access lens_reqmod allow all
 
 ...
 ```
 
 This example would load a client module in the path `/usr/local/lib/libclient-module.so`,
 that should implement the [API](#API) described above. After the host initializes the eCap
-interface and service, transactions should induce the data exchange between host, eCap-streamn
+interface and service, transactions should induce the data exchange between host, eCap-stream
 and finally, the client module.
+
+By configuring both REQMOD and RESPMOD modes, the client module should then start seeing transactions
+both in the _request_ as well as _response_ sides of the communication. Squid -- and thus eCap stream --
+will usually send 2 transactions related to the _request_ leg, and 1 transaction related to the _response_
+leg of the communication, but this may vary depending on the flow between `client -> proxy -> server`.
 
 ## References
 
