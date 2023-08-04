@@ -41,7 +41,7 @@ namespace EcapStream {
             // Work
             virtual MadeXactionPointer makeXaction(libecap::host::Xaction *hostx);
 
-            void (*send_uri)(int, const char*);
+            void (*send_uri)(int, const char*, int mode);
             void (*header)(int, const char*, const char*);
             void (*send)(int, const void*, size_type);
             Chunk (*receive)(int, size_type, size_type);
