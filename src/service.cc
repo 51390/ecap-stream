@@ -79,7 +79,7 @@ void EcapStream::Service::start() {
         init = (void (*)())dlsym(_module, "init");
         init();
 
-        send_uri = (void (*)(int, const char*, int))dlsym(_module, "uri");
+        send_uri = (void (*)(int, const char*, int, const char*))dlsym(_module, "uri");
         header = (void (*)(int, const char*, const char*))dlsym(_module, "header");
         // note on function and variable naming.
         // send & receive are "mirrored" to keep a more ergonomic
