@@ -69,11 +69,12 @@ void EcapStream::Xaction::start() {
                 hostx->cause() : \
                 hostx->virgin();
             const libecap::RequestLine& rl = dynamic_cast<const libecap::RequestLine&>(cause.firstLine());
+            const std::string& method = rl.method().image();
             const libecap::Area uri = rl.uri();
             _uri = (char*)malloc(uri.size + 1);
             memset(_uri, 0, uri.size + 1);
             memcpy(_uri, uri.start, uri.size);
-            service->send_uri(_id, _uri, service->mode());
+            service->send_uri(_id, _uri, service->mode(), method.c_str());
         } catch(const std::exception& e) {
             std::clog << "Transaction failed to start while initializing: " << e.what() << std::endl;
         }
@@ -160,11 +161,12 @@ void EcapStream::Xaction::noteVbContentAvailable()
         HeaderVisitor hv(service, _id);
         const libecap::Message& cause = hostx->cause();
         const libecap::RequestLine& rl = dynamic_cast<const libecap::RequestLine&>(cause.firstLine());
+        const std::string& method = rl.method().image();
         const libecap::Area uri = rl.uri();
         _uri = (char*)malloc(uri.size + 1);
         memset(_uri, 0, uri.size + 1);
         memcpy(_uri, uri.start, uri.size);
-        service->send_uri(_id, _uri, service->mode());
+        service->send_uri(_id, _uri, service->mode(), method.c_str());
 
         adapted->header().visitEach(hv);
     }
