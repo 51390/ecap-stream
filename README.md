@@ -73,7 +73,7 @@ This function should perform any module wide initialization required, such as sp
 or runtime setups that may be needed. It is called once per eCap-service initialization, which
 usually translates into a single call per host lifecycle.
 
-### _void_ uri(_int_ id, _const char*_ uri)
+### _void_ uri(_int_ id, _const char*_ uri, _int_ mode, _const char*_ method)
 
 This function is the first called for each transaction. In the context of web requests or responses,
 note that each flow of information is separately handled by different transactions. So, there could be
@@ -85,6 +85,10 @@ _Parameters_:
  throughout all other interactions between eCap stream and the client module.
  - **uri** _(const char*)_: a C null-terminated string, containing the full uri of the request (inluding
  query string parameters).
+ - **mode** _(int)_: an integer signalling which ICAP mode this transaction is related to. _0_ is for _REQMOD_
+(i.e. _requests_), and _1_ is for _RESPMOD_ (i.e. _responses_).
+ - **method** _(const char*)_: a C null-terminated string containing the request method. For a web/proxy context,
+this can be any usual valid HTTP verb or proxying related verbs, such as _CONNECT_.
 
 ### _void_ header(_int_ id, _const char*_ name, _const char*_ value)
 
