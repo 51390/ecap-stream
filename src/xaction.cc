@@ -166,9 +166,9 @@ void EcapStream::Xaction::noteVbContentAvailable()
         _uri = (char*)malloc(uri.size + 1);
         memset(_uri, 0, uri.size + 1);
         memcpy(_uri, uri.start, uri.size);
-        service->send_uri(_id, _uri, service->mode(), method.c_str());
 
         adapted->header().visitEach(hv);
+        service->send_uri(_id, _uri, service->mode(), method.c_str());
     }
 
     const libecap::Area vb = hostx->vbContent(0, libecap::nsize); // get all vb
