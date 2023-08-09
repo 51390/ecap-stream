@@ -60,9 +60,7 @@ void EcapStream::Xaction::start() {
 
     if (hostx->virgin().body()) {
         hostx->vbMake();
-    }
-
-    if(!_uri) {
+    } else if(!_uri) {
         try {
             const libecap::Message& cause = \
                 service->mode() == EcapStream::Service::RESPMOD ? \
