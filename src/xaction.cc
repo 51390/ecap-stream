@@ -157,7 +157,10 @@ void EcapStream::Xaction::noteVbContentAvailable()
     if(!_uri) {
         // send uri and headers
         HeaderVisitor hv(service, _id);
-        const libecap::Message& cause = hostx->cause();
+        const libecap::Message& cause = \
+            service->mode() == EcapStream::Service::RESPMOD ? \
+            hostx->cause() : \
+            hostx->virgin();
         const libecap::RequestLine& rl = dynamic_cast<const libecap::RequestLine&>(cause.firstLine());
         const std::string& method = rl.method().image();
         const libecap::Area uri = rl.uri();
