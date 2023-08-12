@@ -59,6 +59,8 @@ implementation requirements.
   required path for the module that will in turn be loaded by eCap stream to fully implement your
   adapter/filter.
 
+One such implementation of a shared object library in Rust can be referrenced [here](https://github.com/51390/prism).
+
 The following section details which endpoints need to be implemented, and their purpose, and
 the final one will provide an example configuration for loading ecap-stream in the squid proxy.
 
